@@ -2,15 +2,15 @@
 # Copy this to .github/workflows/daily-deploy-check.yml in each project
 #
 # Required secrets:
-#   AUDIT_WEBHOOK_SECRET - shared secret for authenticating with vibebuildlab API
+#   AUDIT_WEBHOOK_SECRET - shared secret for authenticating with buildproven API
 #
 # Required variables (set in repo settings):
-#   PRODUCTION_URL - the production URL to check (e.g., https://saas.vibebuildlab.com)
+#   PRODUCTION_URL - the production URL to check (e.g., https://saas.buildproven.ai)
 #
 # This workflow:
 # 1. Runs daily at 6am UTC
 # 2. Checks if production URL responds and SSL is valid
-# 3. Reports deploy stage status to vibebuildlab dashboard
+# 3. Reports deploy stage status to buildproven dashboard
 
 name: Daily Deploy Check
 
@@ -21,7 +21,7 @@ on:
   workflow_dispatch: # Manual trigger
 
 env:
-  VIBEBUILDLAB_API: https://dash.vibebuildlab.com/api/audit-results
+  BUILDPROVEN_API: https://dash.buildproven.ai/api/audit-results
 
 jobs:
   deploy-check:
@@ -95,13 +95,13 @@ jobs:
             echo "deploy=fail" >> $GITHUB_OUTPUT
           fi
 
-      - name: Report to vibebuildlab
+      - name: Report to buildproven
         if: always()
         run: |
           # Get project slug from repo name
           PROJECT_SLUG="${{ github.event.repository.name }}"
 
-          curl -X POST "$VIBEBUILDLAB_API" \
+          curl -X POST "$BUILDPROVEN_API" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.AUDIT_WEBHOOK_SECRET }}" \
             -d "{

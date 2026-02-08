@@ -36,6 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-For a complete list of changes, see the [git history](https://github.com/vibebuildlab/wfhroulette).
+For a complete list of changes, see the [git history](https://github.com/buildproven/wfhroulette).
 
-> **Vibe Build Lab LLC** · [vibebuildlab.com](https://vibebuildlab.com)
+> **BuildProven LLC** · [buildproven.ai](https://buildproven.ai)

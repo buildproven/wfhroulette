@@ -10,7 +10,7 @@ This guide explains how to set up social preview images for GitHub and web shari
 - Meta tags for Facebook, Twitter/X, LinkedIn, etc.
 - Proper dimensions: 1200x630px (recommended)
 
-When you share `https://vibebuildlab.com`, it will display the dice logo with branding.
+When you share `https://buildproven.ai`, it will display the dice logo with branding.
 
 ### Testing Web Sharing
 
@@ -33,7 +33,7 @@ GitHub is auto-generating a generic image. To use our custom dice logo:
 
 #### Option 1: Upload via GitHub Web (Recommended)
 
-1. Go to: https://github.com/vibebuildlab/wfhroulette/settings
+1. Go to: https://github.com/buildproven/wfhroulette/settings
 2. Scroll to "Social preview" section
 3. Click "Edit"
 4. Upload `web/og-image.svg` (or create a PNG version)
@@ -73,12 +73,12 @@ convert -background none -size 1200x630 web/og-image.svg web/og-image.png
 
 ### Check GitHub Preview
 
-1. Share this URL anywhere: https://github.com/vibebuildlab/wfhroulette
+1. Share this URL anywhere: https://github.com/buildproven/wfhroulette
 2. Should show custom dice image (after you upload in settings)
 
 ### Check Web App Preview
 
-1. Share this URL: https://vibebuildlab.com
+1. Share this URL: https://buildproven.ai
 2. Should show dice logo with "WFHroulette" text
 
 ## Alignment Strategy

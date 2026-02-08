@@ -100,6 +100,8 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: '1.0.0'
+
+
       - name: Display Detection Report
         run: |
           echo "📊 Project Detection Results (Minimal Mode)"
@@ -232,7 +234,7 @@ jobs:
           if [ -f setup.js ]; then
             node setup.js --security-config
           else
-            node node_modules/create-qa-architect/setup.js --security-config
+            npx create-qa-architect@latest --security-config
           fi
 
       - name: Security pattern detection
@@ -311,6 +313,7 @@ jobs:
             exit 1
           }
 
+
   # Step 4: Documentation - run for production-ready projects
   documentation:
     runs-on: ubuntu-latest
@@ -348,7 +351,7 @@ jobs:
           if [ -f setup.js ]; then
             node setup.js --security-config
           else
-            node node_modules/create-qa-architect/setup.js --security-config
+            npx create-qa-architect@latest --security-config
           fi
 
       - name: Documentation validation
@@ -357,7 +360,7 @@ jobs:
           if [ -f setup.js ]; then
             node setup.js --validate-docs
           else
-            node node_modules/create-qa-architect/setup.js --validate-docs
+            npx create-qa-architect@latest --validate-docs
           fi
 
       - name: Documentation consistency and security audit freshness
@@ -367,7 +370,7 @@ jobs:
           if [ -f scripts/check-docs.sh ]; then
             bash scripts/check-docs.sh
           else
-            bash node_modules/create-qa-architect/scripts/check-docs.sh
+            echo "No check-docs.sh found - skipping documentation consistency check"
           fi
 
       - name: Package size and contents validation

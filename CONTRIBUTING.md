@@ -94,4 +94,4 @@ Please be respectful and constructive in all interactions. We're here to build g
 
 ---
 
-> **Vibe Build Lab LLC** · [vibebuildlab.com](https://vibebuildlab.com)
+> **BuildProven LLC** · [buildproven.ai](https://buildproven.ai)

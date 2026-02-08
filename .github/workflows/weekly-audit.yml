@@ -2,12 +2,12 @@
 # Copy this to .github/workflows/weekly-audit.yml in each project
 #
 # Required secrets:
-#   AUDIT_WEBHOOK_SECRET - shared secret for authenticating with vibebuildlab API
+#   AUDIT_WEBHOOK_SECRET - shared secret for authenticating with buildproven API
 #
 # This workflow:
 # 1. Runs weekly (Sunday 2am UTC) and on manual trigger
 # 2. Checks build, tests, lint, typecheck, security
-# 3. Reports results to vibebuildlab dashboard
+# 3. Reports results to buildproven dashboard
 
 name: Weekly Audit
 
@@ -18,7 +18,7 @@ on:
   workflow_dispatch: # Manual trigger
 
 env:
-  VIBEBUILDLAB_API: https://dash.vibebuildlab.com/api/audit-results
+  BUILDPROVEN_API: https://dash.buildproven.ai/api/audit-results
 
 jobs:
   audit:
@@ -129,13 +129,13 @@ jobs:
             echo "audit=fail" >> $GITHUB_OUTPUT
           fi
 
-      - name: Report to vibebuildlab
+      - name: Report to buildproven
         if: always()
         run: |
           # Get project slug from package.json name or repo name
           PROJECT_SLUG=$(node -e "console.log(require('./package.json').name)" 2>/dev/null || echo "${{ github.event.repository.name }}")
 
-          curl -X POST "$VIBEBUILDLAB_API" \
+          curl -X POST "$BUILDPROVEN_API" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.AUDIT_WEBHOOK_SECRET }}" \
             -d "{

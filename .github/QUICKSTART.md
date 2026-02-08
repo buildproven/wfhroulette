@@ -62,7 +62,7 @@ Then reference the issue: "Please help with issue #123"
 
 ## 📊 Workflow Status
 
-Check workflow runs: https://github.com/vibebuildlab/wfhroulette/actions
+Check workflow runs: https://github.com/buildproven/wfhroulette/actions
 
 ## 📚 Full Documentation
 

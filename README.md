@@ -5,8 +5,8 @@ Randomly (but deterministically) pick one Work-From-Home day per ISO week (Mon-F
 ---
 
 > **Maintainer & Ownership**
-> This project is maintained by **Vibe Build Lab LLC**, a studio focused on AI-assisted product development, micro-SaaS, and "vibe coding" workflows for solo founders and small teams.
-> Learn more at **https://www.vibebuildlab.com**.
+> This project is maintained by **BuildProven LLC**, a studio focused on AI-assisted product development, micro-SaaS, and "vibe coding" workflows for solo founders and small teams.
+> Learn more at **https://www.buildproven.ai**.
 
 ---
 
@@ -56,7 +56,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ```bash
 # Clone the repository
-git clone https://github.com/vibebuildlab/wfhroulette.git
+git clone https://github.com/buildproven/wfhroulette.git
 cd wfhroulette
 
 # Install (no dependencies needed)
@@ -143,9 +143,9 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Legal
 
-- [Privacy Policy](https://vibebuildlab.com/privacy-policy)
-- [Terms of Service](https://vibebuildlab.com/terms)
+- [Privacy Policy](https://buildproven.ai/privacy-policy)
+- [Terms of Service](https://buildproven.ai/terms)
 
 ---
 
-> **Vibe Build Lab LLC** · [vibebuildlab.com](https://vibebuildlab.com)
+> **BuildProven LLC** · [buildproven.ai](https://buildproven.ai)

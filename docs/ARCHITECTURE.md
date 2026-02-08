@@ -248,4 +248,4 @@ Tests end-to-end functionality:
 
 For detailed development information, see [TESTING.md](TESTING.md) and [DEPLOYMENT.md](DEPLOYMENT.md).
 
-> **Vibe Build Lab LLC** · [vibebuildlab.com](https://vibebuildlab.com)
+> **BuildProven LLC** · [buildproven.ai](https://buildproven.ai)

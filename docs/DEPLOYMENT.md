@@ -338,4 +338,4 @@ kill -9 $(lsof -t -i :4173)
 
 For more information, see [ARCHITECTURE.md](ARCHITECTURE.md) and [TESTING.md](TESTING.md).
 
-> **Vibe Build Lab LLC** · [vibebuildlab.com](https://vibebuildlab.com)
+> **BuildProven LLC** · [buildproven.ai](https://buildproven.ai)

@@ -4,7 +4,7 @@
 
 If you discover a security vulnerability in WFHroulette, please email:
 
-**security@vibebuildlab.com**
+**security@buildproven.ai**
 
 Please do not open public issues for security vulnerabilities. We will work with you to assess and address the issue.
 
@@ -40,4 +40,4 @@ When using WFHroulette:
 
 ---
 
-> For more information, visit [vibebuildlab.com](https://vibebuildlab.com)
+> For more information, visit [buildproven.ai](https://buildproven.ai)
