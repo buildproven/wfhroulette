@@ -13,5 +13,6 @@
       "source": "/web/(.*)",
       "destination": "/web/$1"
     }
-  ]
+  ],
+  "ignoreCommand": "if [ \"$VERCEL_GIT_COMMIT_AUTHOR_LOGIN\" = \"dependabot[bot]\" ]; then exit 0; fi; exit 1"
 }
