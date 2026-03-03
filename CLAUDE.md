@@ -67,3 +67,7 @@ _See `docs/` for ARCHITECTURE, TESTING, DEPLOYMENT. Global rules in `~/.claude/C
 ## GitHub Actions Policy
 
 See `.claude-setup/docs/GITHUB-ACTIONS-POLICY.md` — minimal workflow mode, no new workflows.
+
+---
+
+**Last Updated:** 2026-03-01
