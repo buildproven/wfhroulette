@@ -15,7 +15,8 @@
     "**/test/**",
     "**/__tests__/**",
     "**/*.test.*",
-    "**/*.spec.*"
+    "**/*.spec.*",
+    "src/cli.js"
   ],
   "disabled": []
 }
