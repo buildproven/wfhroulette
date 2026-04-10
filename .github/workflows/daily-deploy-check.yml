@@ -16,8 +16,8 @@ name: Daily Deploy Check
 
 on:
   schedule:
-    # Every day at 6am UTC
-    - cron: '0 6 * * *'
+    # Every Monday at 6am UTC
+    - cron: '0 6 * * 1'
   workflow_dispatch: # Manual trigger
 
 env:
