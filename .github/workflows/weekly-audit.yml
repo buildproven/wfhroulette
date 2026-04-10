@@ -13,8 +13,8 @@ name: Weekly Audit
 
 on:
   schedule:
-    # Every Sunday at 2am UTC
-    - cron: '0 2 * * 0'
+    # Monthly on 1st at 2am UTC
+    - cron: '0 2 1 * *'
   workflow_dispatch: # Manual trigger
 
 env:
