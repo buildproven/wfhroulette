@@ -107,6 +107,14 @@
       "tsc --noEmit --project tests/tsconfig.json",
       "eslint --fix",
       "prettier --write"
+    ],
+    "**/*.{js,jsx,ts,tsx,mjs,cjs,html}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{js,jsx,mjs,cjs,html}": [
+      "eslint --fix",
+      "prettier --write"
     ]
   },
   "engines": {
