@@ -117,6 +117,10 @@
       "prettier --write"
     ]
   },
+  "overrides": {
+    "tmp": "0.2.6",
+    "uuid": ">=11.1.1"
+  },
   "engines": {
     "node": ">=20"
   },
