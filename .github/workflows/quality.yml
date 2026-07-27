@@ -193,7 +193,7 @@ jobs:
       - name: Production dependency CVE gate
         run: |
           echo "🔒 Auditing dependencies (high+) with npm..."
-          npm audit --audit-level high
+          npm audit --audit-level high --omit=dev
       - name: Check for hardcoded secrets
         run: |
           set -euo pipefail
@@ -267,7 +267,7 @@ jobs:
       - name: Advisory full-tree dependency audit (non-blocking)
         run: |
           echo "ℹ️ Advisory dependency audit (does not block)" >> "$GITHUB_STEP_SUMMARY"
-          npm audit --audit-level high >> "$GITHUB_STEP_SUMMARY" 2>&1 || true
+          npm audit --audit-level high --omit=dev >> "$GITHUB_STEP_SUMMARY" 2>&1 || true
       - name: Install semgrep CLI for vibe-audit
         # Install semgrep, then resolve where the binary actually landed and put
         # THAT dir on $GITHUB_PATH for the next step. pipx's bin dir varies by
@@ -571,5 +571,6 @@ jobs:
             echo "- ⚠️ Documentation: $DOCS_RESULT" >> $GITHUB_STEP_SUMMARY
           fi
             # PR comment step not enabled (use --pr-comments to add)
+
 
   # Slack alerts not enabled (use --alerts-slack to add)
