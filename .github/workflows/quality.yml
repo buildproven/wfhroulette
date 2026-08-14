@@ -3,11 +3,10 @@ name: Quality Checks
 # Industry best practice: "Fail fast locally, verify comprehensively remotely"
 #
 # Local (pre-commit): Lint + format (staged files) - instant feedback
-# Local (pre-push): Type check + tests (changed files) - catches logic bugs
-# CI (this workflow): Full test suite + E2E + security - comprehensive verification
+# Local (pre-push): Lint + format + secrets + changed dependency audit
+# CI (this workflow): Affected tests, Semgrep, and other security checks
 #
-# Note: Lint/format NOT duplicated here - pre-commit already did it
-# This avoids redundant work and reduces CI costs
+# The local gate stays fast. CI is the full safety net for this generator repo.
 
 on:
   push: # Kept: catches direct pushes and scheduled scans
@@ -135,7 +134,7 @@ jobs:
   # Note: Lint/format jobs REMOVED - pre-commit already does this locally
   # This follows industry best practice: "Each layer does unique work"
   # Pre-commit = lint + format on staged files
-  # CI = full tests + E2E + security (things that can't be done locally)
+  # CI = affected tests + E2E + security (things that can't be done locally)
 
   # Step 2: Security checks - run if dependencies exist
   #
@@ -208,24 +207,19 @@ jobs:
           "${GITLEAKS_DIR}/gitleaks" detect --source . --redact --no-banner
 
       - name: Security pattern detection
-        uses: semgrep/semgrep-action@713efdd345f3035192eaa63f56867b88e63e4e5d # v1
-        with:
-          config: >
-            p/security-audit@1.85.0
-            p/javascript@1.85.0
-          cache: true
-          cache-key: semgrep-security-audit-1.85.0-javascript-1.85.0-${{ env.SEMGREP_VERSION }}
-        env:
-          # Use Semgrep app token ONLY if a real one is configured. Do NOT fall
-          # back to GITHUB_TOKEN: any non-empty SEMGREP_APP_TOKEN puts the action
-          # into "logged in" mode (`semgrep ci`), which refuses the `--config`
-          # rules below ("Cannot run semgrep ci with --config while logged in").
-          # Leaving it empty runs the registry config rules locally — exactly
-          # what we want for PR-time SAST without uploading findings to the app.
-          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SEMGREP_VERSION: '1.85.0'
-          SEMGREP_ENABLE_VERSION_CHECK: 'false'
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            --mount "type=bind,source=$PWD,target=/src,readonly" \
+            --workdir /src \
+            --tmpfs /tmp:rw,nosuid,nodev,size=512m \
+            --env HOME=/tmp \
+            'semgrep/semgrep@sha256:65dcd4408adda7c183a6b4550cb1e9b19f7f627a6fbb7e0559bd466bedc44d7b' \
+            semgrep scan \
+            --config p/security-audit \
+            --config p/javascript \
+            --error \
+            --metrics=off
 
   # Step 2b: Advisory audit report (NON-BLOCKING). Runs in parallel with the
   # security gate (needs detect-maturity, NOT security) so a gate failure can
@@ -329,6 +323,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Setup Node.js ${{ matrix.node-version }}
@@ -352,6 +347,43 @@ jobs:
             exit 1
           }
 
+      - name: Run affected tests
+        if: hashFiles('.buildproven/test-impact.json') != '' && (github.event_name == 'pull_request' || github.event_name == 'push')
+        env:
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+          CLAUDE_KIT_SHA: 6209610058b95a3d3f2a9d1af7a10f9c69f0dd69
+        run: |
+          set -euo pipefail
+          if [ -z "$BASE_SHA" ] || ! git cat-file -e "$BASE_SHA:.buildproven/test-impact.json" 2>/dev/null; then
+            echo "Base test-impact policy is absent. Running the complete migration audit once."
+            timeout 300 npm run test
+            exit 0
+          fi
+
+          POLICY_ROOT="$RUNNER_TEMP/test-impact-policy"
+          KIT_ROOT="$RUNNER_TEMP/claude-kit"
+          mkdir -p "$POLICY_ROOT/.buildproven" "$KIT_ROOT"
+          git show "$BASE_SHA:.buildproven/test-impact.json" > "$POLICY_ROOT/.buildproven/test-impact.json"
+          if ! cmp -s "$POLICY_ROOT/.buildproven/test-impact.json" .buildproven/test-impact.json; then
+            echo "Test-impact policy changed. Running the complete selector-policy audit."
+            timeout 300 npm run test
+            exit 0
+          fi
+          git -C "$KIT_ROOT" init --quiet
+          git -C "$KIT_ROOT" remote add origin https://github.com/buildproven/claude-kit.git
+          git -C "$KIT_ROOT" fetch --quiet --filter=blob:none origin main
+          git -C "$KIT_ROOT" merge-base --is-ancestor "$CLAUDE_KIT_SHA" FETCH_HEAD
+          git -C "$KIT_ROOT" checkout --quiet --detach "$CLAUDE_KIT_SHA"
+          test "$(git -C "$KIT_ROOT" rev-parse HEAD)" = "$CLAUDE_KIT_SHA"
+
+          POLICY_SHA256="$(sha256sum "$POLICY_ROOT/.buildproven/test-impact.json" | awk '{print $1}')"
+          timeout 300 node "$KIT_ROOT/scripts/test-impact.js" \
+            --execute \
+            --policy-root "$POLICY_ROOT" \
+            --policy-sha256 "$POLICY_SHA256" \
+            --git-range "$BASE_SHA" "$HEAD_SHA" \
+            --
       - name: Lint
         run: |
           echo "⏱️ Lint must complete within 5 minutes"
@@ -481,7 +513,7 @@ jobs:
           echo "Web app detected: $IS_WEBAPP"
 
       - name: Lighthouse CI
-        if: hashFiles('.lighthouserc.js', '.lighthouserc.json', 'lighthouserc.js') != '' && steps.detect-webapp.outputs.is-webapp == 'true'
+        if: hashFiles('.lighthouserc.cjs', '.lighthouserc.js', '.lighthouserc.json', 'lighthouserc.js') != '' && steps.detect-webapp.outputs.is-webapp == 'true'
         id: lighthouse
         run: |
           echo "Running Lighthouse CI..."
