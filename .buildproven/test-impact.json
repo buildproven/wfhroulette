@@ -3,15 +3,11 @@
   "jsRunner": "node",
   "mappings": [
     {
-      "paths": [
-        "src/util.js"
-      ],
+      "paths": ["src/util.js"],
       "commands": [
         {
           "executable": "node",
-          "args": [
-            "test/util.test.js"
-          ]
+          "args": ["test/util.test.js"]
         }
       ]
     }
@@ -46,10 +42,7 @@
       "commands": [
         {
           "executable": "npm",
-          "args": [
-            "run",
-            "test"
-          ]
+          "args": ["run", "test"]
         }
       ]
     }
@@ -57,10 +50,7 @@
   "fallback": [
     {
       "executable": "npm",
-      "args": [
-        "run",
-        "test"
-      ]
+      "args": ["run", "test"]
     }
   ]
 }
