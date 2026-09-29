@@ -25,7 +25,6 @@ paths = [
   '''examples/''',
   '''docs/''',
   '''.md$''',
-  '''.claude-setup/.*''',
   '''.lighthouseci/''',
   '''.vercel/output/''',
   '''.next/''',
