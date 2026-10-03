@@ -42,9 +42,9 @@ jobs:
         id: build
         run: |
           if npm run build; then
-            echo "success=true" >> $GITHUB_OUTPUT
+            echo "success=true" >> "$GITHUB_OUTPUT"
           else
-            echo "success=false" >> $GITHUB_OUTPUT
+            echo "success=false" >> "$GITHUB_OUTPUT"
           fi
         continue-on-error: true
 
@@ -59,13 +59,13 @@ jobs:
           PASSED=$(echo "$TEST_OUTPUT" | grep -oE '[0-9]+ passed' | tail -1 | awk '{print $1}' || echo "0")
           FAILED=$(echo "$TEST_OUTPUT" | grep -oE '[0-9]+ failed' | tail -1 | awk '{print $1}' || echo "0")
 
-          echo "passed=${PASSED:-0}" >> $GITHUB_OUTPUT
-          echo "failed=${FAILED:-0}" >> $GITHUB_OUTPUT
+          echo "passed=${PASSED:-0}" >> "$GITHUB_OUTPUT"
+          echo "failed=${FAILED:-0}" >> "$GITHUB_OUTPUT"
 
           if [ "${FAILED:-0}" = "0" ] && [ "${PASSED:-0}" != "0" ]; then
-            echo "success=true" >> $GITHUB_OUTPUT
+            echo "success=true" >> "$GITHUB_OUTPUT"
           else
-            echo "success=false" >> $GITHUB_OUTPUT
+            echo "success=false" >> "$GITHUB_OUTPUT"
           fi
         continue-on-error: true
 
@@ -74,12 +74,12 @@ jobs:
         run: |
           LINT_OUTPUT=$(npm run lint 2>&1) || true
           ERRORS=$(echo "$LINT_OUTPUT" | grep -cE '^\s+[0-9]+:[0-9]+\s+error' || echo "0")
-          echo "errors=${ERRORS:-0}" >> $GITHUB_OUTPUT
+          echo "errors=${ERRORS:-0}" >> "$GITHUB_OUTPUT"
 
           if [ "${ERRORS:-0}" = "0" ]; then
-            echo "success=true" >> $GITHUB_OUTPUT
+            echo "success=true" >> "$GITHUB_OUTPUT"
           else
-            echo "success=false" >> $GITHUB_OUTPUT
+            echo "success=false" >> "$GITHUB_OUTPUT"
           fi
         continue-on-error: true
 
@@ -87,11 +87,11 @@ jobs:
         id: typecheck
         run: |
           if npm run typecheck 2>/dev/null || npx tsc --noEmit 2>/dev/null; then
-            echo "success=true" >> $GITHUB_OUTPUT
-            echo "errors=0" >> $GITHUB_OUTPUT
+            echo "success=true" >> "$GITHUB_OUTPUT"
+            echo "errors=0" >> "$GITHUB_OUTPUT"
           else
-            echo "success=false" >> $GITHUB_OUTPUT
-            echo "errors=1" >> $GITHUB_OUTPUT
+            echo "success=false" >> "$GITHUB_OUTPUT"
+            echo "errors=1" >> "$GITHUB_OUTPUT"
           fi
         continue-on-error: true
 
@@ -101,11 +101,11 @@ jobs:
           AUDIT_OUTPUT=$(npm audit 2>&1) || true
 
           if echo "$AUDIT_OUTPUT" | grep -qiE '[0-9]+ (high|critical)'; then
-            echo "vulnerabilities=1" >> $GITHUB_OUTPUT
-            echo "success=false" >> $GITHUB_OUTPUT
+            echo "vulnerabilities=1" >> "$GITHUB_OUTPUT"
+            echo "success=false" >> "$GITHUB_OUTPUT"
           else
-            echo "vulnerabilities=0" >> $GITHUB_OUTPUT
-            echo "success=true" >> $GITHUB_OUTPUT
+            echo "vulnerabilities=0" >> "$GITHUB_OUTPUT"
+            echo "success=true" >> "$GITHUB_OUTPUT"
           fi
         continue-on-error: true
 
@@ -114,9 +114,9 @@ jobs:
         run: |
           # execute stage: build must pass
           if [ "${{ steps.build.outputs.success }}" = "true" ]; then
-            echo "execute=pass" >> $GITHUB_OUTPUT
+            echo "execute=pass" >> "$GITHUB_OUTPUT"
           else
-            echo "execute=fail" >> $GITHUB_OUTPUT
+            echo "execute=fail" >> "$GITHUB_OUTPUT"
           fi
 
           # audit stage: tests + lint + typecheck + security
@@ -124,9 +124,9 @@ jobs:
              [ "${{ steps.lint.outputs.success }}" = "true" ] && \
              [ "${{ steps.typecheck.outputs.success }}" = "true" ] && \
              [ "${{ steps.security.outputs.success }}" = "true" ]; then
-            echo "audit=pass" >> $GITHUB_OUTPUT
+            echo "audit=pass" >> "$GITHUB_OUTPUT"
           else
-            echo "audit=fail" >> $GITHUB_OUTPUT
+            echo "audit=fail" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Report to buildproven
@@ -159,15 +159,17 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          echo "## Audit Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Build | ${{ steps.build.outputs.success == 'true' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Tests | ${{ steps.tests.outputs.success == 'true' && '✅' || '❌' }} (${{ steps.tests.outputs.passed }} passed, ${{ steps.tests.outputs.failed }} failed) |" >> $GITHUB_STEP_SUMMARY
-          echo "| Lint | ${{ steps.lint.outputs.success == 'true' && '✅' || '❌' }} (${{ steps.lint.outputs.errors }} errors) |" >> $GITHUB_STEP_SUMMARY
-          echo "| TypeScript | ${{ steps.typecheck.outputs.success == 'true' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Security | ${{ steps.security.outputs.success == 'true' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Execute Stage:** ${{ steps.result.outputs.execute }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Audit Stage:** ${{ steps.result.outputs.audit }}" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "## Audit Results"
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            echo "| Build | ${{ steps.build.outputs.success == 'true' && '✅' || '❌' }} |"
+            echo "| Tests | ${{ steps.tests.outputs.success == 'true' && '✅' || '❌' }} (${{ steps.tests.outputs.passed }} passed, ${{ steps.tests.outputs.failed }} failed) |"
+            echo "| Lint | ${{ steps.lint.outputs.success == 'true' && '✅' || '❌' }} (${{ steps.lint.outputs.errors }} errors) |"
+            echo "| TypeScript | ${{ steps.typecheck.outputs.success == 'true' && '✅' || '❌' }} |"
+            echo "| Security | ${{ steps.security.outputs.success == 'true' && '✅' || '❌' }} |"
+            echo ""
+            echo "**Execute Stage:** ${{ steps.result.outputs.execute }}"
+            echo "**Audit Stage:** ${{ steps.result.outputs.audit }}"
+          } >> "$GITHUB_STEP_SUMMARY"
