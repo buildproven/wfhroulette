@@ -21,21 +21,23 @@ jobs:
         id: prev_tag
         run: |
           PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-          echo "tag=$PREV_TAG" >> $GITHUB_OUTPUT
+          echo "tag=$PREV_TAG" >> "$GITHUB_OUTPUT"
 
       - name: Generate release notes
         id: notes
         run: |
-          TAG=${GITHUB_REF#refs/tags/}
-          PREV_TAG=${{ steps.prev_tag.outputs.tag }}
+          TAG="${GITHUB_REF#refs/tags/}"
+          PREV_TAG="${{ steps.prev_tag.outputs.tag }}"
 
           if [ -n "$PREV_TAG" ]; then
-            echo "## Changes since $PREV_TAG" > notes.md
-            echo "" >> notes.md
-            git log ${PREV_TAG}..${TAG} --pretty=format:"- %s" >> notes.md
-            echo "" >> notes.md
-            echo "" >> notes.md
-            echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${TAG}" >> notes.md
+            {
+              echo "## Changes since $PREV_TAG"
+              echo ""
+              git log "${PREV_TAG}..${TAG}" --pretty=format:"- %s"
+              echo ""
+              echo ""
+              echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${TAG}"
+            } > notes.md
           else
             echo "Initial release" > notes.md
           fi
